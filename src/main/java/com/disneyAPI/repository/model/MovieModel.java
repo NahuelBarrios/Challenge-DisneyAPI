@@ -1,5 +1,6 @@
 package com.disneyAPI.repository.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -27,6 +28,6 @@ public class MovieModel {
     private String tittle;
     private Date creation;
     private Integer calification;
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    private List<CharacterModel> characterModel;
+    @OneToMany
+    private List<CharacterModel> characterModel = new ArrayList<>();
 }

@@ -2,6 +2,8 @@ package com.disneyAPI.mapper;
 
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
+import com.disneyAPI.dtos.CharacterDTOList;
+import com.disneyAPI.dtos.CharacterUpdateDTO;
 import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.domain.Character;
 
@@ -52,4 +54,12 @@ public class CharacterMapper {
                 .movieModel(character.getMovieModel()).build();
         return characterDTO;
     }
+
+    public static CharacterDTOList mapDomainToDTOList(Character character){
+        CharacterDTOList characterDTOList = CharacterDTOList.builder()
+                .name(character.getName())
+                .image(character.getImage()).build();
+        return characterDTOList;
+    }
+
 }
