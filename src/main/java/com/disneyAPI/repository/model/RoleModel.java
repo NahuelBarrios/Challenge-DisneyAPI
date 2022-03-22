@@ -1,35 +1,30 @@
 package com.disneyAPI.repository.model;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity(name="characters")
-public class CharacterModel {
-
+@Table(name = "roles")
+public class RoleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String image;
+    @Column(nullable = false)
     private String name;
-    private Integer age;
-    private Double weight;
-    private String history;
-    @OneToMany(
-            mappedBy = "characters",
-            fetch = FetchType.LAZY
-    )
-    private List<MovieModel> movies;
+    private String description;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 }

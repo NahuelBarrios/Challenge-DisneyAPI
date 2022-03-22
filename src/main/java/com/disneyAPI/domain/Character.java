@@ -15,5 +15,5 @@ public class Character {
     private Integer age;
     private Double weight;
     private String history;
-    private List<MovieModel> movieModel;
+    private List<MovieModel> movies;
 }

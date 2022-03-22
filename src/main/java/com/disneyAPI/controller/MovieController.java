@@ -38,7 +38,7 @@ public class MovieController {
     }
 
     @PostMapping("/movies")
-    public ResponseEntity<MovieDTO> createCharacter(@Valid @RequestBody MovieDTOCreation movieDTOCreation){
+    public ResponseEntity<MovieDTO> createMovie(@Valid @RequestBody MovieDTOCreation movieDTOCreation){
         Movie movieDomain = MovieMapper.mapDTOCreationTODomain(movieDTOCreation);
         MovieDTO movieDTO = MovieMapper.mapDomainToDTO(movieService.createMovie(movieDomain));
         return ResponseEntity.ok(movieDTO);
@@ -65,8 +65,8 @@ public class MovieController {
         return ResponseEntity.ok(movieDTOList);
     }
 
-    @GetMapping(value = "/movies", params = "order") // muestra peli completa, todos los detalles
-    public ResponseEntity<List<MovieDTO>> mostrarPeliculasOrden(@RequestParam(defaultValue = "ASC") String order) throws MovieNotFoundException{
+    @GetMapping(value = "/movies", params = "order")
+    public ResponseEntity<List<MovieDTO>> getMoviesOrder(@RequestParam(defaultValue = "ASC") String order) throws MovieNotFoundException{
 
         if (order.equalsIgnoreCase("ASC") || order.equalsIgnoreCase("DESC")){
             List<MovieDTO> movieDTOList = movieService.getOrder(order)

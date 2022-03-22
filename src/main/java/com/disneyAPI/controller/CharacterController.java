@@ -40,6 +40,14 @@ public class CharacterController {
         return ResponseEntity.ok(characterDTO);
     }
 
+    @PutMapping("/characters/{id}")
+    public ResponseEntity<CharacterDTO> updateCharacter(@PathVariable Integer id,
+                                                        @RequestBody CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException{
+        Character character = CharacterMapper.mapUpdateDtoToDomain(characterUpdateDTO);
+        CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateCharacter(id,character));
+        return ResponseEntity.ok(characterDTO);
+    }
+
     @GetMapping("/characters")
     public ResponseEntity<List<CharacterDTOList>> getAll(){
         List<CharacterDTOList> characterDTOList = characterService.getAll()

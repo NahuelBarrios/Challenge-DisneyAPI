@@ -6,6 +6,7 @@ import com.disneyAPI.dtos.CharacterDTOList;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
 import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.domain.Character;
+import java.util.stream.Collectors;
 
 public class CharacterMapper {
 
@@ -17,7 +18,8 @@ public class CharacterMapper {
                 .age(characterModel.getAge())
                 .weight(characterModel.getWeight())
                 .history(characterModel.getHistory())
-                .movieModel(characterModel.getMovieModel()).build();
+                .movies(characterModel.getMovies())
+                .build();
         return character;
     }
 
@@ -29,7 +31,8 @@ public class CharacterMapper {
                 .age(character.getAge())
                 .weight(character.getWeight())
                 .history(character.getHistory())
-                .movieModel(character.getMovieModel()).build();
+                .movies(character.getMovies())
+                .build();
         return characterModel;
     }
 
@@ -51,7 +54,7 @@ public class CharacterMapper {
                 .age(character.getAge())
                 .weight(character.getWeight())
                 .history(character.getHistory())
-                .movieModel(character.getMovieModel()).build();
+                .movieModel(character.getMovies()).build();
         return characterDTO;
     }
 
@@ -62,4 +65,12 @@ public class CharacterMapper {
         return characterDTOList;
     }
 
+    public static Character mapUpdateDtoToDomain(CharacterUpdateDTO characterUpdateDTO){
+        Character character = Character.builder()
+                .name(characterUpdateDTO.getName())
+                .age(characterUpdateDTO.getAge())
+                .weight(characterUpdateDTO.getWeight())
+                .build();
+        return character;
+    }
 }
