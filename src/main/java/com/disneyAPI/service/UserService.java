@@ -14,6 +14,7 @@ import com.disneyAPI.repository.model.UserModel;
 import com.disneyAPI.security.JwtProvider;
 import com.disneyAPI.security.MainUser;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,6 +55,15 @@ public class UserService {
         return UserMapper.mapDomainToDTO(userDomain);
     }
 
+    public JwtDTO generateAuthenticationToken(User userDomain) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userDomain.getEmail(), userDomain.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtProvider.generateToken(authentication);
+        MainUser userLog = (MainUser) authentication.getPrincipal();
+        return new JwtDTO(jwt, userLog.getEmail());
+    }
+
     @Transactional(readOnly = true)
     public List<UserDTO> getAll() {
         List<UserModel> userModelList = userRepository.findAll();
@@ -69,19 +79,39 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO getAuthenticatedUser(String jwt) throws UserNotFoundException {
-        String email = jwtProvider.getEmailFromToken(jwt);
-        UserModel userModel = userRepository.findByEmail(email);
-        User user = UserMapper.mapModelToDomain(userModel);
-        return UserMapper.mapDomainToDTO(user);
+    public User loginUser(User user) throws UserNotFoundException{
+        if (userRepository.existsByEmail(user.getEmail())) {
+            String password = user.getPassword();
+            UserModel userModel = userRepository.findByEmail(user.getEmail());
+            return getUserPasswordChecked(password, userModel);
+        } else {
+            throw new UserNotFoundException("error mail invalido");
+        }
+
     }
 
-    public JwtDTO generateAuthenticationToken(User userDomain) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDomain.getEmail(), userDomain.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtProvider.generateToken(authentication);
-        MainUser userLog = (MainUser) authentication.getPrincipal();
-        return new JwtDTO(jwt, userLog.getEmail());
+    private User getUserPasswordChecked(String password, UserModel userModel) throws UserNotFoundException {
+        if (passwordMatches(password, userModel.getPassword())) {
+            User userDomain = mapModelToDomain(userModel);
+            return userDomain;
+        } else {
+            throw new UserNotFoundException("contraseña incorrecta");
+        }
     }
+
+    private Boolean passwordMatches(String password, String passwordEncrypted) {
+        return passwordEncoder.matches(password, passwordEncrypted);
+    }
+
+    @Transactional
+    public void deleteUser(Integer id) throws UserNotFoundException {
+        Optional<UserModel> modelOptional = userRepository.findById(id);
+        if (!modelOptional.isEmpty()) {
+            UserModel userModel = modelOptional.get();
+            userRepository.delete(userModel);
+        } else {
+            throw new UserNotFoundException(String.format("User with this ID " + id + "is not found", id));
+        }
+    }
+
 }
