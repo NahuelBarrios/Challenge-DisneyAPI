@@ -3,6 +3,8 @@ package com.disneyAPI.mapper;
 import com.disneyAPI.domain.User;
 import com.disneyAPI.dtos.UserCreationDTO;
 import com.disneyAPI.dtos.UserDTO;
+import com.disneyAPI.dtos.UserLoginDTO;
+import com.disneyAPI.dtos.UserUpdateDTO;
 import com.disneyAPI.repository.model.UserModel;
 
 public class UserMapper {
@@ -48,4 +50,19 @@ public class UserMapper {
         return userDomain;
     }
 
+    public static User mapLoginDTOToDomain(UserLoginDTO userLoginDTO){
+        User user = User.builder()
+                .email(userLoginDTO.getEmail())
+                .password(userLoginDTO.getPassword()).build();
+        return user;
+    }
+
+    public static User mapUpdateDtoToDomain(UserUpdateDTO userUpdateDTO){
+        User user = User.builder()
+                .firstName(userUpdateDTO.getFirstName())
+                .lastName(userUpdateDTO.getLastName())
+                .email(userUpdateDTO.getEmail())
+                .password(userUpdateDTO.getPassword()).build();
+        return user;
+    }
 }
