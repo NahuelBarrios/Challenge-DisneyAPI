@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import static com.disneyAPI.mapper.UserMapper.mapDomainToDTO;
 import static com.disneyAPI.mapper.UserMapper.mapModelToDomain;
 
 public class UserService {
@@ -112,6 +113,22 @@ public class UserService {
         } else {
             throw new UserNotFoundException(String.format("User with this ID " + id + "is not found", id));
         }
+    }
+
+    @Transactional
+    public User updateUser(Integer id,User user) throws UserNotFoundException{
+        if(userRepository.existsById(id)){
+            UserModel userModel = userRepository.findById(Integer.valueOf(id)).get();
+            userModel.setFirstName(user.getFirstName());
+            userModel.setLastName(user.getLastName());
+            userModel.setEmail(user.getEmail());
+            userModel.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(userModel);
+            return mapModelToDomain(userModel);
+        }else {
+            throw new UserNotFoundException(String.format("User with ID: %s not found", id));
+        }
+
     }
 
 }

@@ -6,6 +6,7 @@ import com.disneyAPI.dtos.JwtDTO;
 import com.disneyAPI.dtos.UserCreationDTO;
 import com.disneyAPI.dtos.UserDTO;
 import com.disneyAPI.dtos.UserLoginDTO;
+import com.disneyAPI.dtos.UserUpdateDTO;
 import com.disneyAPI.exceptions.UserNotFoundException;
 import com.disneyAPI.mapper.UserMapper;
 import com.disneyAPI.service.UserService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,6 +63,14 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable Integer id){
         userService.deleteUser(id);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PutMapping("/auth/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id,
+                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws UserNotFoundException{
+        User user = UserMapper.mapUpdateDtoToDomain(userUpdateDTO);
+        UserDTO userDTO = UserMapper.mapDomainToDTO(userService.updateUser(id,user));
+        return ResponseEntity.ok(userDTO);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
