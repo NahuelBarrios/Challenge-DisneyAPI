@@ -1,15 +1,17 @@
 package com.disneyAPI.repository.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,15 +31,10 @@ public class MovieModel {
     private String tittle;
     private Date creation;
     private Integer calification;
-    @ManyToOne(
-            optional = true,
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.PERSIST
-            }
-    )
-    @JoinColumn(name="character_id")
-    @JsonIgnoreProperties({"movies"})
-    private CharacterModel characters;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonBackReference
+    @JoinTable(name = "characters_movies",
+            joinColumns = @JoinColumn(name = "id_movies", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_characters",referencedColumnName = "id"))
+    private List<CharacterModel> characters = new ArrayList<>();
 }

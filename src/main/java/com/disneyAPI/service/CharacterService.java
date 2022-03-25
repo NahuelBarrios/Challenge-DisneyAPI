@@ -28,13 +28,6 @@ public class CharacterService {
     @Transactional
     public Character createCharacter(Character character){
         CharacterModel characterModel = CharacterMapper.mapDomainToModel(character);
-        Optional<MovieModel> movieModelOptional = movieRepository.findById(character.getId());
-        if(movieModelOptional.isEmpty()){
-            throw new MovieNotFoundException(String.format("Organization with ID: %s not found",character.getId()));
-        }
-        List<MovieModel> movieModelList = characterModel.getMovies();
-        movieModelList.add(movieModelOptional.get());
-        characterModel.setMovies(movieModelList);
         characterRepository.save(characterModel);
         return CharacterMapper.mapModelToDomain(characterModel);
     }
@@ -50,8 +43,31 @@ public class CharacterService {
         characterOld.setName(character.getName());
         characterOld.setAge(character.getAge());
         characterOld.setWeight(character.getWeight());
-        characterOld.setMovies(character.getMovies());
         return CharacterMapper.mapModelToDomain(characterRepository.save(characterOld));
+    }
+
+    @Transactional
+    public Character updateMovie(Integer idCharacter, Integer idMovie) throws CharacterNotFoundException{
+        Optional<CharacterModel> characterModel = characterRepository.findById(idCharacter);
+        if(characterModel.isEmpty()){
+            throw new CharacterNotFoundException(
+                    String.format("Character with ID: %s not found", idCharacter));
+        }
+        characterModel.get().setMovies(loadMovie(characterModel.get().getMovies(),idMovie));
+        characterRepository.save(characterModel.get());
+        return CharacterMapper.mapModelToDomain(characterModel.get());
+    }
+
+    private List<MovieModel> loadMovie(List<MovieModel> movieModelList,Integer idMovie) throws CharacterNotFoundException{
+        List<MovieModel> auxList = movieModelList;
+        for(MovieModel movieModel : auxList){
+            if(movieModel.getId().equals(idMovie)){
+                throw new CharacterNotFoundException(String.format("Ya se encuentra en la lista", idMovie));
+            }
+        }
+        MovieModel movieModelAux = movieRepository.findById(Integer.valueOf(idMovie)).get();
+        auxList.add(movieModelAux);
+        return auxList;
     }
 
     @Transactional

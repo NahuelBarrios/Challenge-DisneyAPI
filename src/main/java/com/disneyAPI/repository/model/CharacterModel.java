@@ -1,12 +1,16 @@
 package com.disneyAPI.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,9 +31,10 @@ public class CharacterModel {
     private Integer age;
     private Double weight;
     private String history;
-    @OneToMany(
-            mappedBy = "characters",
-            fetch = FetchType.LAZY
-    )
-    private List<MovieModel> movies;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JsonBackReference
+    @JoinTable(name = "characters_movies",
+    joinColumns = @JoinColumn(name = "id_characters", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_movies",referencedColumnName = "id"))
+     private List<MovieModel> movies = new ArrayList<>();
 }

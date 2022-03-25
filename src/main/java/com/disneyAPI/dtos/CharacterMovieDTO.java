@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CharacterUpdateDTO {
-    private String name;
-    private Integer age;
-    private Double weight;
+public class CharacterMovieDTO {
+    private Integer id;
 }

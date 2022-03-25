@@ -47,7 +47,7 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new DuplicateEmailException("This email is in use");
         }
-        RoleModel roleModel = roleRepository.findByName("USER");
+        RoleModel roleModel = roleRepository.findByName("ADMIN");
         user.setRole(RoleMapper.mapModelToDomain(roleModel));
         UserModel userModel = UserMapper.mapDomainToModel(user);
         userModel.setPassword(encryptPassword(user));
