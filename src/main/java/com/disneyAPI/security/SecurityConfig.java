@@ -3,6 +3,7 @@ package com.disneyAPI.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +29,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
     }
+
+    private static final String[] PERMIT_ALL = {"/auth/login","/auth/register"};
+
+    private static final String[] GET_USER = {"/movies/**","/characters/**"};
+
+    private static final String[] GET_ADMIN = {"/auth/users"};
+
+    private static final String[] POST_ADMIN = {"/movies","/characters"};
+
+    private static final String[] DELETE_ADMIN = {"/movies/{id}","/characters/{id}"};
+
+    private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}"};
+
+    private static final String[] PUT_USER = {"/auth/{id}"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +72,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/h2/**","/characters/**","/movies/**","/auth/**").permitAll()
+                .antMatchers(PERMIT_ALL).permitAll()
+                .and()
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET,GET_USER).hasAnyAuthority("USER","ADMIN")
+                .antMatchers(HttpMethod.GET,GET_ADMIN).hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST,POST_ADMIN).hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE,DELETE_ADMIN).hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT,PUT_ADMIN).hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT,PUT_USER).hasAnyAuthority("USER","ADMIN")
                 .anyRequest().authenticated();
     }
 

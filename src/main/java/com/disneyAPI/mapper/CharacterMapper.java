@@ -1,12 +1,15 @@
 package com.disneyAPI.mapper;
 
+import com.disneyAPI.domain.Movie;
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterDTOList;
+import com.disneyAPI.dtos.CharacterMovieDTO;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
 import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.domain.Character;
-import java.util.stream.Collectors;
+import com.disneyAPI.repository.model.MovieModel;
+import java.util.List;
 
 public class CharacterMapper {
 
@@ -73,4 +76,5 @@ public class CharacterMapper {
                 .build();
         return character;
     }
+
 }

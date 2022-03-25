@@ -4,6 +4,7 @@ import com.disneyAPI.domain.Character;
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterDTOList;
+import com.disneyAPI.dtos.CharacterMovieDTO;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
 import com.disneyAPI.dtos.ErrorDTO;
 import com.disneyAPI.exceptions.CharacterNotFoundException;
@@ -45,6 +46,12 @@ public class CharacterController {
                                                         @RequestBody CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException{
         Character character = CharacterMapper.mapUpdateDtoToDomain(characterUpdateDTO);
         CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateCharacter(id,character));
+        return ResponseEntity.ok(characterDTO);
+    }
+
+    @PutMapping("/characters/add/{id}")
+    public ResponseEntity<CharacterDTO> addMovie(@PathVariable Integer id, @RequestBody CharacterMovieDTO characterMovieDTO) throws CharacterNotFoundException{
+        CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateMovie(id,characterMovieDTO.getId()));
         return ResponseEntity.ok(characterDTO);
     }
 
