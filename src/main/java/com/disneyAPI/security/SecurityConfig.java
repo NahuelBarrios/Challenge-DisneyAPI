@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtTokenFilter();
     }
 
-    private static final String[] PERMIT_ALL = {"/auth/login","/auth/register"};
+    private static final String[] PERMIT_ALL = {"/auth/login","/auth/register","/swagger-ui/**","/api/docs","/swagger-ui.html"};
 
     private static final String[] GET_USER = {"/movies/**","/characters/**"};
 
@@ -43,6 +44,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}"};
 
     private static final String[] PUT_USER = {"/auth/{id}"};
+
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**",
+            "/api/docs"
+    };
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers(AUTH_WHITELIST);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
