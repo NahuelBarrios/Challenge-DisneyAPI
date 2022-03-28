@@ -1,101 +1,110 @@
 package com.disneyAPI.controller;
 
-import com.disneyAPI.domain.Character;
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterDTOList;
 import com.disneyAPI.dtos.CharacterMovieDTO;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
-import com.disneyAPI.dtos.ErrorDTO;
 import com.disneyAPI.exceptions.CharacterNotFoundException;
-import com.disneyAPI.mapper.CharacterMapper;
-import com.disneyAPI.service.CharacterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RestController
-public class CharacterController {
+@Tag(name = "Characters", description = "Operations related to Characters")
+public interface CharacterController {
 
-    private final CharacterService characterService;
-
-    public CharacterController(CharacterService characterService){
-        this.characterService = characterService;
-    }
-
+    @Operation(
+            summary = "Create new character",
+            description = "To create a character, you must access this endpoint.")
     @PostMapping("/characters")
-    public ResponseEntity<CharacterDTO> createCharacter(@Valid @RequestBody CharacterDTOCreation characterDTOCreation){
-        Character characterDomain = CharacterMapper.mapDTOCreationTODomain(characterDTOCreation);
-        CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.createCharacter(characterDomain));
-        return ResponseEntity.ok(characterDTO);
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    CharacterDTO createCharacter(@Valid @RequestBody CharacterDTOCreation characterDTOCreation);
 
+
+    @Operation(summary = "Update a character by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update a character by id",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CharacterDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Character not found", content = @Content)})
     @PutMapping("/characters/{id}")
-    public ResponseEntity<CharacterDTO> updateCharacter(@PathVariable Integer id,
-                                                        @RequestBody CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException{
-        Character character = CharacterMapper.mapUpdateDtoToDomain(characterUpdateDTO);
-        CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateCharacter(id,character));
-        return ResponseEntity.ok(characterDTO);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    CharacterDTO updateCharacter(@PathVariable Integer id,
+                                                        @RequestBody CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException;
 
+    @Operation(summary = "add a movie in character by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update a movie in character by id",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CharacterDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content)})
     @PutMapping("/characters/add/{id}")
-    public ResponseEntity<CharacterDTO> addMovie(@PathVariable Integer id, @RequestBody CharacterMovieDTO characterMovieDTO) throws CharacterNotFoundException{
-        CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateMovie(id,characterMovieDTO.getId()));
-        return ResponseEntity.ok(characterDTO);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    CharacterDTO addMovie(@PathVariable Integer id, @RequestBody CharacterMovieDTO characterMovieDTO) throws CharacterNotFoundException;
 
+    @Operation(
+            summary = "Get character list",
+            description = "To get  list of the characters.")
     @GetMapping("/characters")
-    public ResponseEntity<List<CharacterDTOList>> getAll(){
-        List<CharacterDTOList> characterDTOList = characterService.getAll()
-                .stream().map(CharacterMapper::mapDomainToDTOList)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(characterDTOList);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    List<CharacterDTOList> getAll();
 
+    @Operation(
+            summary = "Get a character by Id",
+            description = "To get a character by its Id you must access this endpoint"
+
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get a character by Id",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CharacterDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid Id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Character not found", content = @Content)
+    })
     @GetMapping("/characters/{id}")
-    public ResponseEntity<CharacterDTO> getDetailsCharacter(@PathVariable Integer id) throws CharacterNotFoundException {
-        return ResponseEntity.ok(CharacterMapper.mapDomainToDTO(characterService.getById(id)));
-    }
+    @ResponseStatus(HttpStatus.OK)
+    CharacterDTO getDetailsCharacter(@PathVariable Integer id) throws CharacterNotFoundException;
 
+    @Operation(
+            summary = "Get character list by Characters Name",
+            description = "To get a list of the characters, filtering by characters name, you must access this param.")
     @GetMapping(value = "/characters", params = "name")
-    public ResponseEntity<List<CharacterDTO>> getNameCharacter(@RequestParam String name) {
-        List<CharacterDTO> characterDTOList = characterService.getName(name)
-                .stream().map(CharacterMapper::mapDomainToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(characterDTOList);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    List<CharacterDTO> getNameCharacter(@RequestParam String name);
 
+    @Operation(
+            summary = "Get character list by Characters Age",
+            description = "To get a list of the characters, filtering by characters age, you must access this param.")
     @GetMapping(value = "/characters", params = "age")
-    public ResponseEntity<List<CharacterDTO>> getAgeCharacter(@RequestParam Integer age) {
-        List<CharacterDTO> characterDTOList = characterService.getAge(age)
-                .stream().map(CharacterMapper::mapDomainToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(characterDTOList);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    List<CharacterDTO> getAgeCharacter(@RequestParam Integer age);
 
+    @Operation(summary = "Delete a Character by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete a character by id"),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Character not found", content = @Content)})
     @DeleteMapping("/characters/{id}")
-    public ResponseEntity<?> deleteCharacter(@PathVariable Integer id) throws CharacterNotFoundException {
-        characterService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ExceptionHandler(CharacterNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleCharacterNotFoundExceptions(CharacterNotFoundException ex) {
-        ErrorDTO characterNotFound = ErrorDTO.builder()
-                .code(HttpStatus.NOT_FOUND)
-                .message(ex.getMessage()).build();
-        return new ResponseEntity(characterNotFound, HttpStatus.NOT_FOUND);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    void deleteCharacter(@PathVariable Integer id) throws CharacterNotFoundException;
 
 }

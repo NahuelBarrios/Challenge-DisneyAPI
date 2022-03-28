@@ -10,6 +10,12 @@ import com.disneyAPI.dtos.UserUpdateDTO;
 import com.disneyAPI.exceptions.UserNotFoundException;
 import com.disneyAPI.mapper.UserMapper;
 import com.disneyAPI.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,70 +34,88 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class UserController {
+@Tag(name = "Users", description = "Operations related to Users")
+public interface UserController {
 
-    private final UserService userService;
-
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
-
+    @Operation(
+            summary = "Register a new User",
+            description = "To register, this endpoint must be accessed"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Register user",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = JwtDTO.class))
+                    }),
+            @ApiResponse(responseCode = "400",
+                    description = "The fields must not be empty",
+                    content = @Content),
+            @ApiResponse(responseCode = "400",
+                    description = "This email is in use",
+                    content = @Content)
+    })
     @PostMapping("/auth/register")
-    ResponseEntity<JwtDTO> createUser (@Valid @RequestBody UserCreationDTO userCreationDTO){
-        User userDomain = UserMapper.mapDtoCreationToDomain(userCreationDTO);
-        userService.registerUser(userDomain);
-        JwtDTO jwtDto = userService.generateAuthenticationToken(userDomain);
-        return ResponseEntity.ok(jwtDto);
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    JwtDTO createUser(@Valid @RequestBody UserCreationDTO userCreationDTO);
 
+    @Operation(
+            summary = "User login",
+            description = "To log in, you must access this endpoint"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "User login",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = JwtDTO.class))
+                    }),
+            @ApiResponse(responseCode = "400",
+                    description = "The password is invalid",
+                    content = @Content),
+            @ApiResponse(responseCode = "404",
+                    description = "User not found",
+                    content = @Content)
+    })
     @PostMapping("/auth/login")
-    ResponseEntity<JwtDTO> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO){
-        User userDomain = UserMapper.mapLoginDTOToDomain(userLoginDTO);
-        UserMapper.mapDomainToDTO(userService.loginUser(userDomain));
-        JwtDTO jwtDto = userService.generateAuthenticationToken(userDomain);
-        return ResponseEntity.ok(jwtDto);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    JwtDTO loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO);
 
+    @Operation(
+            summary = "Find all users",
+            description = "To fetch all users, you must access this endpoint"
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Find all users",
+            content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = List.class))
+            })
     @GetMapping("/auth/users")
-    public ResponseEntity<List<UserDTO>> findAll() {
-        List<UserDTO> userDTOList = userService.getAll();
-        return ResponseEntity.ok(userDTOList);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    List<UserDTO> findAll();
 
+    @Operation(summary = "Delete a User by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete User by id",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
     @DeleteMapping("/auth/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id){
-        userService.deleteUser(id);
-        return new ResponseEntity(HttpStatus.OK);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    void deleteUser(@PathVariable Integer id);
 
+    @Operation(summary = "Update User by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update User by id",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content)})
     @PutMapping("/auth/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id,
-                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws UserNotFoundException{
-        User user = UserMapper.mapUpdateDtoToDomain(userUpdateDTO);
-        UserDTO userDTO = UserMapper.mapDomainToDTO(userService.updateUser(id,user));
-        return ResponseEntity.ok(userDTO);
-    }
+    @ResponseStatus(HttpStatus.OK)
+    UserDTO updateUser(@PathVariable Integer id,
+                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws UserNotFoundException;
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleUserNotFoundExceptions(UserNotFoundException ex) {
-        ErrorDTO userNotFound =
-                ErrorDTO.builder()
-                        .code(HttpStatus.NOT_FOUND)
-                        .message(ex.getMessage()).build();
-        return new ResponseEntity(userNotFound, HttpStatus.NOT_FOUND);
-
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 }
