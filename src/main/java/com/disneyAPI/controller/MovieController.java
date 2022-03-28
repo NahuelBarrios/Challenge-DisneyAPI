@@ -5,6 +5,10 @@ import com.disneyAPI.dtos.MovieDTOCreation;
 import com.disneyAPI.dtos.MovieDTOList;
 import com.disneyAPI.exceptions.MovieNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.validation.Valid;
@@ -34,8 +38,18 @@ public interface MovieController {
     List<MovieDTOList> getAll();
 
     @Operation(
-            summary = "Get movie list by Movies id",
-            description = "To get a list of the movies, filtering by movies id, you must access this endpoint.")
+            summary = "Get a movie by Id",
+            description = "To get a movie by its Id you must access this endpoint"
+
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get a movie by Id",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = MovieDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid Id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content)
+    })
     @GetMapping("/movies/{id}")
     @ResponseStatus(HttpStatus.OK)
     MovieDTO getDetailsMovie(@PathVariable Integer id) throws MovieNotFoundException;

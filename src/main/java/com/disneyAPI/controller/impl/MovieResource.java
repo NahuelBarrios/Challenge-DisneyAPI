@@ -9,6 +9,7 @@ import com.disneyAPI.dtos.MovieDTOList;
 import com.disneyAPI.exceptions.MovieNotFoundException;
 import com.disneyAPI.mapper.MovieMapper;
 import com.disneyAPI.service.MovieService;
+import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(value = "MovieResource", tags = {"Movies"})
 @RestController
 public class MovieResource implements MovieController {
 
