@@ -1,19 +1,12 @@
 package com.disneyAPI.controller;
 
-import com.disneyAPI.domain.Character;
 import com.disneyAPI.domain.Movie;
-import com.disneyAPI.dtos.CharacterDTO;
-import com.disneyAPI.dtos.CharacterDTOCreation;
-import com.disneyAPI.dtos.CharacterDTOList;
 import com.disneyAPI.dtos.ErrorDTO;
 import com.disneyAPI.dtos.MovieDTO;
 import com.disneyAPI.dtos.MovieDTOCreation;
 import com.disneyAPI.dtos.MovieDTOList;
-import com.disneyAPI.exceptions.CharacterNotFoundException;
 import com.disneyAPI.exceptions.MovieNotFoundException;
-import com.disneyAPI.mapper.CharacterMapper;
 import com.disneyAPI.mapper.MovieMapper;
-import com.disneyAPI.repository.MovieRepository;
 import com.disneyAPI.service.MovieService;
 import java.util.List;
 import java.util.stream.Collectors;

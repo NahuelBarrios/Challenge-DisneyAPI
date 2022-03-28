@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.4</version>
+		<version>2.5.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.disneyAPI</groupId>
-	<artifactId>demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>disney</artifactId>
+	<version>1.0.0</version>
 	<name>Disney</name>
 	<description>Disney API project for Spring Boot</description>
 	<properties>
@@ -110,6 +110,16 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+	<dependency>
+		<groupId>io.springfox</groupId>
+		<artifactId>springfox-swagger2</artifactId>
+		<version>3.0.0</version>
+	</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
     </dependencies>
 
