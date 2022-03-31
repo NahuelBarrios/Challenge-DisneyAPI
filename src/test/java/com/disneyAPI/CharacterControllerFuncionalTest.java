@@ -1,12 +1,11 @@
-package com.disneyAPI.util;
+package com.disneyAPI;
 
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
 import com.disneyAPI.dtos.ErrorDTO;
-import com.disneyAPI.dtos.JwtDTO;
-import com.disneyAPI.dtos.UserCreationDTO;
 import com.disneyAPI.repository.CharacterRepository;
+import com.disneyAPI.util.HeaderBuilder;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
