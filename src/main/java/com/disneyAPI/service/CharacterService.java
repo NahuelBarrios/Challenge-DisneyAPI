@@ -1,14 +1,12 @@
 package com.disneyAPI.service;
 
 import com.disneyAPI.exceptions.CharacterNotFoundException;
-import com.disneyAPI.exceptions.MovieNotFoundException;
 import com.disneyAPI.mapper.CharacterMapper;
 import com.disneyAPI.repository.CharacterRepository;
 import com.disneyAPI.repository.MovieRepository;
 import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.domain.Character;
 import com.disneyAPI.repository.model.MovieModel;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

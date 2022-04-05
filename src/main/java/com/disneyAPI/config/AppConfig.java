@@ -1,12 +1,14 @@
 package com.disneyAPI.config;
 
 import com.disneyAPI.repository.CharacterRepository;
+import com.disneyAPI.repository.GenderRepository;
 import com.disneyAPI.repository.MovieRepository;
 import com.disneyAPI.repository.RoleRepository;
 import com.disneyAPI.repository.UserRepository;
 import com.disneyAPI.security.JwtProvider;
 import com.disneyAPI.security.UserDetailsServiceImpl;
 import com.disneyAPI.service.CharacterService;
+import com.disneyAPI.service.GenderService;
 import com.disneyAPI.service.MovieService;
 import com.disneyAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +42,11 @@ public class AppConfig {
     @Bean
     public UserDetailsServiceImpl userDetailsServiceImpl(UserRepository userRepository) {
         return new UserDetailsServiceImpl(userRepository);
+    }
+
+    @Bean
+    public GenderService genderService(GenderRepository genderRepository){
+        return new GenderService(genderRepository);
     }
 
     @Bean

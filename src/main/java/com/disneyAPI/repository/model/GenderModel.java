@@ -2,7 +2,6 @@ package com.disneyAPI.repository.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,27 +20,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name="movies")
-public class MovieModel {
-
+@Entity(name="genders")
+public class GenderModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String name;
     private String image;
-    private String tittle;
-    private Date creation;
-    private Integer calification;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JsonBackReference
-    @JoinTable(name = "characters_movies",
-            joinColumns = @JoinColumn(name = "id_movies", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_characters",referencedColumnName = "id"))
-    private List<CharacterModel> characters = new ArrayList<>();
-
     @ManyToMany(cascade = CascadeType.ALL)
     @JsonBackReference
     @JoinTable(name = "gender_movies",
-            joinColumns = @JoinColumn(name = "id_movie", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_gender",referencedColumnName = "id"))
-    private List<GenderModel> genders = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "id_gender", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_movie",referencedColumnName = "id"))
+    private List<MovieModel> movies = new ArrayList<>();
 }

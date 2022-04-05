@@ -37,11 +37,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] GET_ADMIN = {"/auth/users"};
 
-    private static final String[] POST_ADMIN = {"/movies","/characters"};
+    private static final String[] POST_ADMIN = {"/movies","/characters","/genders"};
 
     private static final String[] DELETE_ADMIN = {"/movies/{id}","/characters/{id}"};
 
-    private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}"};
+    private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}","/genders/{id}"};
 
     private static final String[] PUT_USER = {"/auth/{id}"};
 
