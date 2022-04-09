@@ -45,8 +45,9 @@ public class AppConfig {
     }
 
     @Bean
-    public GenderService genderService(GenderRepository genderRepository){
-        return new GenderService(genderRepository);
+    public GenderService genderService(GenderRepository genderRepository,
+                                       MovieRepository movieRepository){
+        return new GenderService(genderRepository,movieRepository);
     }
 
     @Bean

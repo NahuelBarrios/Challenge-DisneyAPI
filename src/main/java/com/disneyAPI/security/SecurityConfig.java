@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PERMIT_ALL = {"/auth/login","/auth/register","/swagger-ui/**","/api/docs","/swagger-ui.html"};
 
-    private static final String[] GET_USER = {"/movies/**","/characters/**"};
+    private static final String[] GET_USER = {"/movies/**","/characters/**","/genders"};
 
     private static final String[] GET_ADMIN = {"/auth/users"};
 
@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] DELETE_ADMIN = {"/movies/{id}","/characters/{id}"};
 
-    private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}","/genders/{id}"};
+    private static final String[] PUT_ADMIN = {"/movies/{id}","/characters/{id}","/genders/{id}","/genders/**","/characters/**"};
 
     private static final String[] PUT_USER = {"/auth/{id}"};
 
