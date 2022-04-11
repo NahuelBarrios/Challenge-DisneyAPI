@@ -5,7 +5,7 @@ import com.disneyAPI.dtos.UserCreationDTO;
 import com.disneyAPI.dtos.UserDTO;
 import com.disneyAPI.dtos.UserLoginDTO;
 import com.disneyAPI.dtos.UserUpdateDTO;
-import com.disneyAPI.exceptions.UserNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -105,6 +105,6 @@ public interface UserController {
     @PutMapping("/auth/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDTO updateUser(@PathVariable Integer id,
-                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws UserNotFoundException;
+                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws DisneyRequestException;
 
 }

@@ -3,7 +3,7 @@ package com.disneyAPI;
 import com.disneyAPI.dtos.CharacterDTO;
 import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
-import com.disneyAPI.dtos.ErrorDTO;
+import com.disneyAPI.exceptions.ApiErrorDTO;
 import com.disneyAPI.repository.CharacterRepository;
 import com.disneyAPI.util.HeaderBuilder;
 import java.util.Map;
@@ -86,7 +86,7 @@ public class CharacterControllerFuncionalTest {
         String endpointUrl = characterControllerUrl;
         entity = new HttpEntity(characterDTOCreation, null);
         //When
-        ResponseEntity<ErrorDTO> response = testRestTemplate.exchange(
+        ResponseEntity<ApiErrorDTO> response = testRestTemplate.exchange(
                 endpointUrl,
                 HttpMethod.POST,
                 entity,
@@ -139,7 +139,7 @@ public class CharacterControllerFuncionalTest {
                 .build();
         entity = new HttpEntity(characterUpdateDTO, headers);
         //When
-        ResponseEntity<ErrorDTO> response = testRestTemplate.exchange(
+        ResponseEntity<ApiErrorDTO> response = testRestTemplate.exchange(
                 endpointUrl,
                 HttpMethod.PUT,
                 entity,
@@ -182,7 +182,7 @@ public class CharacterControllerFuncionalTest {
                 .build();
         entity = new HttpEntity(null, headers);
         //When
-        ResponseEntity<ErrorDTO> response = testRestTemplate.exchange(
+        ResponseEntity<ApiErrorDTO> response = testRestTemplate.exchange(
                 endpointUrl,
                 HttpMethod.DELETE,
                 entity,

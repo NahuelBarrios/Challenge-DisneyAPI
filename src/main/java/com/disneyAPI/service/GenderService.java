@@ -1,19 +1,16 @@
 package com.disneyAPI.service;
 
-import com.disneyAPI.domain.Character;
 import com.disneyAPI.domain.Gender;
-import com.disneyAPI.exceptions.CharacterNotFoundException;
-import com.disneyAPI.exceptions.GenderNotFoundException;
-import com.disneyAPI.mapper.CharacterMapper;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import com.disneyAPI.mapper.GenderMapper;
 import com.disneyAPI.repository.GenderRepository;
 import com.disneyAPI.repository.MovieRepository;
-import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.repository.model.GenderModel;
 import com.disneyAPI.repository.model.MovieModel;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 public class GenderService {
@@ -34,10 +31,10 @@ public class GenderService {
     }
 
     @Transactional
-    public Gender updateGender(Integer id, Gender gender) throws GenderNotFoundException {
+    public Gender updateGender(Integer id, Gender gender) throws DisneyRequestException {
         Optional<GenderModel> genderModelOptional= genderRepository.findById(id);
         if(genderModelOptional.isEmpty()){
-            throw new GenderNotFoundException(String.format("Character with ID: %s not found", id));
+            throw new DisneyRequestException("Genero not found", "not.found", HttpStatus.NOT_FOUND);
         }
         GenderModel genderModel = genderModelOptional.get();
         genderModel.setName(gender.getName());
@@ -52,22 +49,21 @@ public class GenderService {
     }
 
     @Transactional
-    public Gender updateMovie(Integer idGender, Integer idMovie) throws GenderNotFoundException {
+    public Gender updateMovie(Integer idGender, Integer idMovie) throws DisneyRequestException {
         Optional<GenderModel> genderModelOptional = genderRepository.findById(idGender);
         if(genderModelOptional.isEmpty()){
-            throw new GenderNotFoundException(
-                    String.format("Gender with ID: %s not found", idGender));
+            throw new DisneyRequestException("Genero not found", "not.found", HttpStatus.NOT_FOUND);
         }
         genderModelOptional.get().setMovies(loadMovie(genderModelOptional.get().getMovies(),idMovie));
         genderRepository.save(genderModelOptional.get());
         return GenderMapper.mapModelToDomain(genderModelOptional.get());
     }
 
-    private List<MovieModel> loadMovie(List<MovieModel> movieModelList, Integer idMovie) throws GenderNotFoundException{
+    private List<MovieModel> loadMovie(List<MovieModel> movieModelList, Integer idMovie) throws DisneyRequestException{
         List<MovieModel> auxList = movieModelList;
         for(MovieModel movieModel : auxList){
             if(movieModel.getId().equals(idMovie)){
-                throw new GenderNotFoundException(String.format("Ya se encuentra en la lista", idMovie));
+                throw new DisneyRequestException("Genero not found", "not.found", HttpStatus.NOT_FOUND);
             }
         }
         MovieModel movieModelAux = movieRepository.findById(Integer.valueOf(idMovie)).get();

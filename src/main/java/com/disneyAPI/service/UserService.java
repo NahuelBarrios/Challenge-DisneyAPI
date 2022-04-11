@@ -3,8 +3,7 @@ package com.disneyAPI.service;
 import com.disneyAPI.domain.User;
 import com.disneyAPI.dtos.JwtDTO;
 import com.disneyAPI.dtos.UserDTO;
-import com.disneyAPI.exceptions.DuplicateEmailException;
-import com.disneyAPI.exceptions.UserNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import com.disneyAPI.mapper.RoleMapper;
 import com.disneyAPI.mapper.UserMapper;
 import com.disneyAPI.repository.RoleRepository;
@@ -16,13 +15,13 @@ import com.disneyAPI.security.MainUser;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import static com.disneyAPI.mapper.UserMapper.mapDomainToDTO;
 import static com.disneyAPI.mapper.UserMapper.mapModelToDomain;
 
 public class UserService {
@@ -45,7 +44,7 @@ public class UserService {
     @Transactional
     public UserDTO registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new DuplicateEmailException("This email is in use");
+            throw new DisneyRequestException("El email ya existe", "bad.request", HttpStatus.BAD_REQUEST);
         }
         RoleModel roleModel = roleRepository.findByName("ADMIN");
         user.setRole(RoleMapper.mapModelToDomain(roleModel));
@@ -80,23 +79,23 @@ public class UserService {
     }
 
     @Transactional
-    public User loginUser(User user) throws UserNotFoundException{
+    public User loginUser(User user) throws DisneyRequestException{
         if (userRepository.existsByEmail(user.getEmail())) {
             String password = user.getPassword();
             UserModel userModel = userRepository.findByEmail(user.getEmail());
             return getUserPasswordChecked(password, userModel);
         } else {
-            throw new UserNotFoundException("error mail invalido");
+            throw new DisneyRequestException("Wrong username or password", "invalid.access", HttpStatus.UNAUTHORIZED);
         }
 
     }
 
-    private User getUserPasswordChecked(String password, UserModel userModel) throws UserNotFoundException {
+    private User getUserPasswordChecked(String password, UserModel userModel) throws DisneyRequestException {
         if (passwordMatches(password, userModel.getPassword())) {
             User userDomain = mapModelToDomain(userModel);
             return userDomain;
         } else {
-            throw new UserNotFoundException("contraseña incorrecta");
+            throw new DisneyRequestException("Wrong username or password", "invalid.access", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -105,18 +104,18 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer id) throws UserNotFoundException {
+    public void deleteUser(Integer id) throws DisneyRequestException {
         Optional<UserModel> modelOptional = userRepository.findById(id);
         if (!modelOptional.isEmpty()) {
             UserModel userModel = modelOptional.get();
             userRepository.delete(userModel);
         } else {
-            throw new UserNotFoundException(String.format("User with this ID " + id + "is not found", id));
+            throw new DisneyRequestException("User not found", "not.found", HttpStatus.NOT_FOUND);
         }
     }
 
     @Transactional
-    public User updateUser(Integer id,User user) throws UserNotFoundException{
+    public User updateUser(Integer id,User user) throws DisneyRequestException{
         if(userRepository.existsById(id)){
             UserModel userModel = userRepository.findById(Integer.valueOf(id)).get();
             userModel.setFirstName(user.getFirstName());
@@ -126,7 +125,7 @@ public class UserService {
             userRepository.save(userModel);
             return mapModelToDomain(userModel);
         }else {
-            throw new UserNotFoundException(String.format("User with ID: %s not found", id));
+            throw new DisneyRequestException("User not found", "not.found", HttpStatus.NOT_FOUND);
         }
 
     }
