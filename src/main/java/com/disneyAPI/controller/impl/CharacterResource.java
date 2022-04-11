@@ -7,16 +7,12 @@ import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterDTOList;
 import com.disneyAPI.dtos.CharacterMovieDTO;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
-import com.disneyAPI.dtos.ErrorDTO;
-import com.disneyAPI.exceptions.CharacterNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import com.disneyAPI.mapper.CharacterMapper;
 import com.disneyAPI.service.CharacterService;
 import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "CharacterResource", tags = {"Characters"})
@@ -37,14 +33,14 @@ public class CharacterResource implements CharacterController {
     }
 
     @Override
-    public CharacterDTO updateCharacter(Integer id, CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException {
+    public CharacterDTO updateCharacter(Integer id, CharacterUpdateDTO characterUpdateDTO) throws DisneyRequestException {
         Character character = CharacterMapper.mapUpdateDtoToDomain(characterUpdateDTO);
         CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateCharacter(id,character));
         return characterDTO;
     }
 
     @Override
-    public CharacterDTO addMovie(Integer id, CharacterMovieDTO characterMovieDTO) throws CharacterNotFoundException{
+    public CharacterDTO addMovie(Integer id, CharacterMovieDTO characterMovieDTO) throws DisneyRequestException{
         CharacterDTO characterDTO = CharacterMapper.mapDomainToDTO(characterService.updateMovie(id,characterMovieDTO.getId()));
         return characterDTO;
     }
@@ -58,7 +54,7 @@ public class CharacterResource implements CharacterController {
     }
 
     @Override
-    public CharacterDTO getDetailsCharacter(Integer id) throws CharacterNotFoundException {
+    public CharacterDTO getDetailsCharacter(Integer id) throws DisneyRequestException {
         return CharacterMapper.mapDomainToDTO(characterService.getById(id));
     }
 
@@ -79,15 +75,8 @@ public class CharacterResource implements CharacterController {
     }
 
     @Override
-    public void deleteCharacter(Integer id) throws CharacterNotFoundException {
+    public void deleteCharacter(Integer id) throws DisneyRequestException {
         characterService.delete(id);
     }
 
-    @ExceptionHandler(CharacterNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleCharacterNotFoundExceptions(CharacterNotFoundException ex) {
-        ErrorDTO characterNotFound = ErrorDTO.builder()
-                .code(HttpStatus.NOT_FOUND)
-                .message(ex.getMessage()).build();
-        return new ResponseEntity(characterNotFound, HttpStatus.NOT_FOUND);
-    }
 }

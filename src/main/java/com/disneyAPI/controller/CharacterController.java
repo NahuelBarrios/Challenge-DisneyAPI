@@ -5,7 +5,7 @@ import com.disneyAPI.dtos.CharacterDTOCreation;
 import com.disneyAPI.dtos.CharacterDTOList;
 import com.disneyAPI.dtos.CharacterMovieDTO;
 import com.disneyAPI.dtos.CharacterUpdateDTO;
-import com.disneyAPI.exceptions.CharacterNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,7 +46,7 @@ public interface CharacterController {
     @PutMapping("/characters/{id}")
     @ResponseStatus(HttpStatus.OK)
     CharacterDTO updateCharacter(@PathVariable Integer id,
-                                                        @RequestBody CharacterUpdateDTO characterUpdateDTO) throws CharacterNotFoundException;
+                                                        @RequestBody CharacterUpdateDTO characterUpdateDTO) throws DisneyRequestException;
 
     @Operation(summary = "add a movie in character by id")
     @ApiResponses(value = {
@@ -58,7 +58,7 @@ public interface CharacterController {
             @ApiResponse(responseCode = "404", description = "Movie not found", content = @Content)})
     @PutMapping("/characters/add/{id}")
     @ResponseStatus(HttpStatus.OK)
-    CharacterDTO addMovie(@PathVariable Integer id, @RequestBody CharacterMovieDTO characterMovieDTO) throws CharacterNotFoundException;
+    CharacterDTO addMovie(@PathVariable Integer id, @RequestBody CharacterMovieDTO characterMovieDTO) throws DisneyRequestException;
 
     @Operation(
             summary = "Get character list",
@@ -82,7 +82,7 @@ public interface CharacterController {
     })
     @GetMapping("/characters/{id}")
     @ResponseStatus(HttpStatus.OK)
-    CharacterDTO getDetailsCharacter(@PathVariable Integer id) throws CharacterNotFoundException;
+    CharacterDTO getDetailsCharacter(@PathVariable Integer id) throws DisneyRequestException;
 
     @Operation(
             summary = "Get character list by Characters Name",
@@ -105,6 +105,6 @@ public interface CharacterController {
             @ApiResponse(responseCode = "404", description = "Character not found", content = @Content)})
     @DeleteMapping("/characters/{id}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteCharacter(@PathVariable Integer id) throws CharacterNotFoundException;
+    void deleteCharacter(@PathVariable Integer id) throws DisneyRequestException;
 
 }

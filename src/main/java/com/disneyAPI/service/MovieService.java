@@ -1,19 +1,15 @@
 package com.disneyAPI.service;
 
-import com.disneyAPI.domain.Character;
 import com.disneyAPI.domain.Movie;
-import com.disneyAPI.exceptions.CharacterNotFoundException;
-import com.disneyAPI.exceptions.MovieNotFoundException;
-import com.disneyAPI.mapper.CharacterMapper;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import com.disneyAPI.mapper.MovieMapper;
 import com.disneyAPI.repository.CharacterRepository;
 import com.disneyAPI.repository.MovieRepository;
-import com.disneyAPI.repository.model.CharacterModel;
 import com.disneyAPI.repository.model.MovieModel;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 public class MovieService {
@@ -41,13 +37,13 @@ public class MovieService {
     }
 
     @Transactional
-    public Movie getById(Integer id) throws MovieNotFoundException {
+    public Movie getById(Integer id) throws DisneyRequestException {
         Optional<MovieModel> modelOptional = movieRepository.findById(id);
         if (!modelOptional.isEmpty()) {
             MovieModel movieModel = modelOptional.get();
             return MovieMapper.mapModelToDomain(movieModel);
         } else {
-            throw new MovieNotFoundException(String.format("Movie with ID: %s not found", id));
+            throw new DisneyRequestException("Pelicula not found", "not.found", HttpStatus.NOT_FOUND);
         }
     }
 

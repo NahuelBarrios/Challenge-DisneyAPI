@@ -1,11 +1,11 @@
 package com.disneyAPI;
 
-import com.disneyAPI.dtos.ErrorDTO;
 import com.disneyAPI.dtos.JwtDTO;
 import com.disneyAPI.dtos.UserCreationDTO;
 import com.disneyAPI.dtos.UserDTO;
 import com.disneyAPI.dtos.UserLoginDTO;
 import com.disneyAPI.dtos.UserUpdateDTO;
+import com.disneyAPI.exceptions.ApiErrorDTO;
 import com.disneyAPI.repository.UserRepository;
 import com.disneyAPI.util.HeaderBuilder;
 import java.util.List;
@@ -187,7 +187,7 @@ public class UserControllerFuncionalTest {
                 .build();
         entity = new HttpEntity(null, headers);
         //When
-        ResponseEntity<ErrorDTO> response = testRestTemplate.exchange(
+        ResponseEntity<ApiErrorDTO> response = testRestTemplate.exchange(
                 endpointUrl,
                 HttpMethod.DELETE,
                 entity,

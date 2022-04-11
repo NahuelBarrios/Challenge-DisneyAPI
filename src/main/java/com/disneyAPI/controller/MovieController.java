@@ -3,7 +3,7 @@ package com.disneyAPI.controller;
 import com.disneyAPI.dtos.MovieDTO;
 import com.disneyAPI.dtos.MovieDTOCreation;
 import com.disneyAPI.dtos.MovieDTOList;
-import com.disneyAPI.exceptions.MovieNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +52,7 @@ public interface MovieController {
     })
     @GetMapping("/movies/{id}")
     @ResponseStatus(HttpStatus.OK)
-    MovieDTO getDetailsMovie(@PathVariable Integer id) throws MovieNotFoundException;
+    MovieDTO getDetailsMovie(@PathVariable Integer id) throws DisneyRequestException;
 
     @Operation(
             summary = "Get movies list by Movies Name",
@@ -66,5 +66,5 @@ public interface MovieController {
             description = "To get a list of the movies, filtering by movies order, you must access this param.")
     @GetMapping(value = "/movies", params = "order")
     @ResponseStatus(HttpStatus.OK)
-    List<MovieDTO> getMoviesOrder(@RequestParam(defaultValue = "ASC") String order) throws MovieNotFoundException;
+    List<MovieDTO> getMoviesOrder(@RequestParam(defaultValue = "ASC") String order) throws DisneyRequestException;
 }

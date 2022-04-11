@@ -2,19 +2,16 @@ package com.disneyAPI.controller.impl;
 
 import com.disneyAPI.controller.MovieController;
 import com.disneyAPI.domain.Movie;
-import com.disneyAPI.dtos.ErrorDTO;
 import com.disneyAPI.dtos.MovieDTO;
 import com.disneyAPI.dtos.MovieDTOCreation;
 import com.disneyAPI.dtos.MovieDTOList;
-import com.disneyAPI.exceptions.MovieNotFoundException;
+import com.disneyAPI.exceptions.DisneyRequestException;
 import com.disneyAPI.mapper.MovieMapper;
 import com.disneyAPI.service.MovieService;
 import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "MovieResource", tags = {"Movies"})
@@ -43,7 +40,7 @@ public class MovieResource implements MovieController {
     }
 
     @Override
-    public MovieDTO getDetailsMovie(Integer id) throws MovieNotFoundException {
+    public MovieDTO getDetailsMovie(Integer id) throws DisneyRequestException {
         return MovieMapper.mapDomainToDTO(movieService.getById(id));
     }
 
@@ -56,7 +53,7 @@ public class MovieResource implements MovieController {
     }
 
     @Override
-    public List<MovieDTO> getMoviesOrder(String order) throws MovieNotFoundException{
+    public List<MovieDTO> getMoviesOrder(String order) throws DisneyRequestException{
 
         if (order.equalsIgnoreCase("ASC") || order.equalsIgnoreCase("DESC")){
             List<MovieDTO> movieDTOList = movieService.getOrder(order)
@@ -65,16 +62,8 @@ public class MovieResource implements MovieController {
             return movieDTOList;
         }
         else{
-            throw new MovieNotFoundException(
-                    String.format("List Movie Error"));
+            throw new DisneyRequestException("Pelicula not found", "not.found", HttpStatus.NOT_FOUND);
         }
     }
 
-    @ExceptionHandler(MovieNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleMovieNotFoundExceptions(MovieNotFoundException ex) {
-        ErrorDTO movieNotFound = ErrorDTO.builder()
-                .code(HttpStatus.NOT_FOUND)
-                .message(ex.getMessage()).build();
-        return new ResponseEntity(movieNotFound, HttpStatus.NOT_FOUND);
-    }
 }
