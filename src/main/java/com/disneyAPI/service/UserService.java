@@ -12,6 +12,7 @@ import com.disneyAPI.repository.model.RoleModel;
 import com.disneyAPI.repository.model.UserModel;
 import com.disneyAPI.security.JwtProvider;
 import com.disneyAPI.security.MainUser;
+import com.sendgrid.helpers.mail.objects.Email;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,15 +31,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     public UserService(UserRepository userRepository,RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder,JwtProvider jwtProvider,
-                       AuthenticationManager authenticationManager){
+                       AuthenticationManager authenticationManager, EmailService emailService){
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -52,6 +55,7 @@ public class UserService {
         userModel.setPassword(encryptPassword(user));
         UserModel save = userRepository.save(userModel);
         User userDomain = mapModelToDomain(save);
+        emailService.welcomeEmail(user.getEmail());
         return UserMapper.mapDomainToDTO(userDomain);
     }
 

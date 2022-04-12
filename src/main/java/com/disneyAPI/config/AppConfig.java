@@ -8,6 +8,7 @@ import com.disneyAPI.repository.UserRepository;
 import com.disneyAPI.security.JwtProvider;
 import com.disneyAPI.security.UserDetailsServiceImpl;
 import com.disneyAPI.service.CharacterService;
+import com.disneyAPI.service.EmailService;
 import com.disneyAPI.service.GenderService;
 import com.disneyAPI.service.MovieService;
 import com.disneyAPI.service.UserService;
@@ -35,8 +36,8 @@ public class AppConfig {
     @Bean
     public UserService userService (UserRepository userRepository, RoleRepository roleRepository,
                                     PasswordEncoder passwordEncoder, JwtProvider jwtProvider,
-                                    AuthenticationManager authenticationManager){
-        return new UserService(userRepository,roleRepository,passwordEncoder,jwtProvider,authenticationManager);
+                                    AuthenticationManager authenticationManager, EmailService emailService){
+        return new UserService(userRepository,roleRepository,passwordEncoder,jwtProvider,authenticationManager,emailService);
     }
 
     @Bean
@@ -55,5 +56,12 @@ public class AppConfig {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") int expiration) {
         return new JwtProvider(secret, expiration);
+    }
+
+    @Bean
+    public EmailService emailService(
+            @Value("${sendgrid.api.key}") String apiKey,
+            @Value("${disney.ong.email.sender}") String emailSender) {
+        return new EmailService(apiKey, emailSender);
     }
 }
